@@ -3,89 +3,280 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Class Attendance</title>
+
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-    .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 90%; max-width: 380px; }
-    h2 { margin-top: 0; text-align: center; color: #333; }
-    label { display: block; margin-top: 1rem; color: #555; font-size: 0.9rem; font-weight: 600; }
-    input { width: 100%; padding: 0.75rem; margin-top: 0.3rem; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
-    button { width: 100%; padding: 0.8rem; background-color: #0066cc; color: white; border: none; border-radius: 6px; margin-top: 1.5rem; font-size: 1rem; font-weight: bold; cursor: pointer; }
-    button:disabled { background-color: #a0c4ff; cursor: not-allowed; }
-    .msg { margin-top: 1rem; text-align: center; font-weight: bold; font-size: 0.95rem; }
-    .success { color: #2e7d32; }
-    .error { color: #d32f2f; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 380px;
+    }
+
+    h2 {
+      margin-top: 0;
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      color: #555;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.3rem;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      margin-top: 1.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #a0c4ff;
+      cursor: not-allowed;
+    }
+
+    .msg {
+      margin-top: 1rem;
+      text-align: center;
+      font-weight: bold;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .success {
+      color: #2e7d32;
+    }
+
+    .error {
+      color: #d32f2f;
+    }
+
+    .another {
+      margin-top: 1rem;
+      background-color: #666;
+    }
   </style>
 </head>
+
 <body>
 
 <div class="card">
+
   <h2>Class Attendance</h2>
+
   <form id="attendanceForm">
-    <label for="password">Session Password</label>
-    <input type="password" id="password" required autocomplete="off">
-    
-    <label for="carne">Student ID (Carné)</label>
-    <input type="text" id="carne" required autocomplete="off">
-    
-    <button type="submit" id="submitBtn">Submit Attendance</button>
+
+    <label for="password">
+      Session Password
+    </label>
+
+    <input
+      type="password"
+      id="password"
+      required
+      autocomplete="off"
+    >
+
+    <label for="carne">
+      Student ID (Carné)
+    </label>
+
+    <input
+      type="text"
+      id="carne"
+      required
+      autocomplete="off"
+      inputmode="numeric"
+    >
+
+    <button
+      type="submit"
+      id="submitBtn"
+    >
+      Submit Attendance
+    </button>
+
   </form>
-  <div id="message" class="msg"></div>
+
+  <div
+    id="message"
+    class="msg"
+  ></div>
+
 </div>
 
+
 <script>
-  // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8PcXv5CqktN_gyb2dqr_bx8uXrWcf66qp3rKaK5P50_SPdBcOrJp2ZuWujaHr9Ooi/exec";
 
-  const form = document.getElementById('attendanceForm');
-  const submitBtn = document.getElementById('submitBtn');
-  const messageDiv = document.getElementById('message');
+  // Google Apps Script Web App URL
+  const SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbw8PcXv5CqktN_gyb2dqr_bx8uXrWcf66qp3rKaK5P50_SPdBcOrJp2ZuWujaHr9Ooi/exec";
 
-  // Device Lockout Check for today's session
-  const todayKey = 'attendance_submitted_' + new Date().toISOString().slice(0, 10);
-  if (localStorage.getItem(todayKey)) {
-    form.style.display = 'none';
-    messageDiv.className = 'msg success';
-    messageDiv.innerText = "You have already recorded your attendance for today from this device.";
-  }
 
-  form.addEventListener('submit', async (e) => {
+  const form =
+    document.getElementById("attendanceForm");
+
+  const submitBtn =
+    document.getElementById("submitBtn");
+
+  const messageDiv =
+    document.getElementById("message");
+
+  const passwordInput =
+    document.getElementById("password");
+
+  const carneInput =
+    document.getElementById("carne");
+
+
+  form.addEventListener("submit", async function(e) {
+
     e.preventDefault();
+
     submitBtn.disabled = true;
     submitBtn.innerText = "Submitting...";
+
     messageDiv.innerText = "";
     messageDiv.className = "msg";
 
-    const password = document.getElementById('password').value;
-    const carne = document.getElementById('carne').value;
+
+    const password =
+      passwordInput.value.trim();
+
+    const carne =
+      carneInput.value.trim();
+
+
+    if (!password) {
+
+      showError("Please enter the session password.");
+      return;
+
+    }
+
+
+    if (!carne) {
+
+      showError("Please enter your Student ID.");
+      return;
+
+    }
+
 
     try {
-      const response = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ password, carne })
-      });
-      
-      const result = await response.json();
 
-      if (result.status === 'success') {
-        messageDiv.className = 'msg success';
-        messageDiv.innerText = result.message;
-        // Lock this device for the remainder of the day
-        localStorage.setItem(todayKey, 'true');
-        form.style.display = 'none';
-      } else {
-        messageDiv.className = 'msg error';
-        messageDiv.innerText = result.message;
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Submit Attendance";
+      const response = await fetch(
+        SCRIPT_URL,
+        {
+          method: "POST",
+
+          body: JSON.stringify({
+            password: password,
+            carne: carne
+          })
+        }
+      );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          "HTTP error " + response.status
+        );
+
       }
-    } catch (err) {
-      messageDiv.className = 'msg error';
-      messageDiv.innerText = "An error occurred. Check internet connection.";
-      submitBtn.disabled = false;
-      submitBtn.innerText = "Submit Attendance";
+
+
+      const result =
+        await response.json();
+
+
+      if (result.status === "success") {
+
+        messageDiv.className =
+          "msg success";
+
+        messageDiv.innerText =
+          result.message;
+
+        // Hide the form after successful attendance.
+        form.style.display = "none";
+
+      }
+
+      else {
+
+        showError(
+          result.message ||
+          "Attendance could not be recorded."
+        );
+
+      }
+
     }
+
+    catch (err) {
+
+      console.error(err);
+
+      showError(
+        "An error occurred. Please check your internet connection and try again."
+      );
+
+    }
+
   });
+
+
+  function showError(message) {
+
+    messageDiv.className =
+      "msg error";
+
+    messageDiv.innerText =
+      message;
+
+    submitBtn.disabled = false;
+
+    submitBtn.innerText =
+      "Submit Attendance";
+
+  }
+
 </script>
+
 </body>
 </html>
